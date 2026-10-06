@@ -1,0 +1,1 @@
+export const recipeCategories = ["All recipes", "Quick meals", "Plant-based", "Vegetarian"] as const;

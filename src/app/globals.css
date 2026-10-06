@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8f6f0;
+  --foreground: #25382f;
+  --ink-soft: #59675c;
+  --forest: #254235;
+  --forest-deep: #1c3328;
+  --tomato: #b14b30;
+  --tomato-dark: #a8442d;
+  --butter: #f0c86a;
+  --leaf: #dce8d9;
+  --line: #e7e3d9;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-fraunces);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-dm-sans), sans-serif;
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  text-decoration: none;
+}
+
+::selection {
+  background: #f0c86a;
+  color: #1c3328;
+}
+
+:focus-visible {
+  outline: 3px solid #c55a3d;
+  outline-offset: 3px;
+}
+
+.display-font {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+.page-grain {
+  background-image: radial-gradient(#34483a 0.55px, transparent 0.55px);
+  background-size: 7px 7px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-up {
+    animation: reveal-up 560ms cubic-bezier(0.2, 0.7, 0.25, 1) both;
+  }
+
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
