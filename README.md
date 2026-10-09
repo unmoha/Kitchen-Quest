@@ -1,40 +1,45 @@
-# Kitchen Quest
+# 🍳 Kitchen Quest
 
 **Learn food. Master recipes. Become a better cook.**
 
+![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
+![Status](https://img.shields.io/badge/status-pre--release-orange)
+
 Kitchen Quest is an educational cooking game that combines practical food knowledge, recipe learning, interactive challenges, and game-based progression.
+
+[Live demo](https://your-demo-link) · [Screenshots](#screenshots)
+
+## Screenshots
+
+[Add 2-3 screenshots or a short GIF: home, a game, the leaderboard]
 
 ## Features
 
-* **Authentication:** Registration, login, email confirmation, password reset, and password updates using Supabase.
-* **Recipes:** Searchable recipes, ingredients, and step-by-step cooking methods.
-* **Learning:** Educational modules and lessons about ingredients, techniques, and food safety.
-* **Five interactive games:** Ingredient Quiz, Recipe Builder, Cooking Order, Kitchen Challenge, and Food Detective.
-* **Progression:** Learning progress, XP, levels, achievements, daily challenges, and streaks.
-* **Leaderboards:** Server-calculated rankings based on earned XP.
-* **AI Chef:** An educational cooking assistant with safety-focused response handling.
-* **Administration:** Protected tools for managing educational content.
-* **Security:** PostgreSQL Row Level Security (RLS), server-side validation, and protected progression operations.
+- **Authentication:** registration, login, email confirmation, and password reset via Supabase
+- **Recipes:** searchable recipes with ingredients and step-by-step methods
+- **Learning:** lessons on ingredients, techniques, and food safety
+- **Five games:** Ingredient Quiz, Recipe Builder, Cooking Order, Kitchen Challenge, Food Detective
+- **Progression:** XP, levels, achievements, daily challenges, and streaks
+- **Leaderboards:** server-calculated rankings based on XP
+- **AI Chef:** an educational cooking assistant with safety-focused responses
+- **Admin tools:** protected content management
+- **Security:** PostgreSQL Row Level Security, server-side validation, protected progression operations
 
-## Technology
+## Tech stack
 
-* Next.js App Router
-* React and TypeScript
-* Tailwind CSS
-* Supabase and PostgreSQL
-* Vitest
-* ESLint
-* Supabase CLI
+| Layer | Tools |
+|---|---|
+| Frontend | Next.js (App Router), React, TypeScript, Tailwind CSS |
+| Backend | Supabase, PostgreSQL |
+| Quality | Vitest, ESLint |
+| Tooling | Supabase CLI |
 
-## Requirements
+## Getting started
 
-* Node.js 20.9 or newer
-* npm
-* A Supabase project for hosted authentication and database functionality
-
-## Installation
-
-Clone the repository and enter the project directory:
+**Requirements:** Node.js 20.9+, npm, and a Supabase project.
 
 ```bash
 git clone https://github.com/unmoha/Kitchen-Quest.git
@@ -42,16 +47,14 @@ cd Kitchen-Quest
 npm install
 ```
 
-Create a `.env.local` file in the project root with your Supabase project URL and publishable key:
+Create `.env.local` in the project root:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 ```
 
-Never commit `.env.local` or expose service-role keys in browser code.
-
-Start the development server:
+> ⚠️ Never commit `.env.local` or expose service-role keys in browser code.
 
 ```bash
 npm run dev
@@ -59,33 +62,30 @@ npm run dev
 
 Open http://localhost:3000.
 
-## Development Commands
+## Scripts
 
-```bash
-npm run dev
-npm run lint
-npm run typecheck
-npm test
-npm run build
-npm start
-```
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Type-check the project |
+| `npm test` | Run tests |
+| `npm run build` | Create a production build |
+| `npm start` | Run the production build |
 
 ## Database
 
-Database configuration, migrations, seed data, and security tests are maintained in the `supabase/` directory.
+Migrations, seed data, and security tests live in `supabase/`. Use the Supabase CLI to apply migrations, and review the target project and migration status before applying changes.
 
-Use the Supabase CLI to apply migrations to the intended project. Review the target project and migration status before applying database changes.
+## Food safety and scope
 
-## Food Safety and Educational Scope
+Kitchen Quest provides general cooking education. Food-safety guidance is conservative and evidence-based. Nutrition content is educational, not medical advice.
 
-Kitchen Quest provides general cooking education. Food-safety guidance should be conservative and evidence-based. Nutrition content is educational and is not a substitute for professional medical advice.
+## Project status
 
-## Developer and Ownership
+Core implementation and automated verification are complete. Real-world deployment and production smoke testing are still needed before public release.
 
-**Developed by Anwar Mohammed**
-**A HAL Technologies product**
-Copyright © 2026 HAL Technologies
+## Credits
 
-## Project Status
-
-The application has completed its planned core implementation and automated verification stages. Real-world deployment and production smoke testing remain necessary before public release.
+Developed by **Anwar Mohammed**, a HAL Technologies product.
+© 2026 HAL Technologies
