@@ -1,6 +1,5 @@
 alter table public.game_sessions
 add column challenge_ingredient_option_ids jsonb not null default '{}'::jsonb;
-
 alter table public.game_sessions
 add constraint game_sessions_recipe_builder_candidate_pool_check
 check (

@@ -10,13 +10,10 @@ create table if not exists public.user_achievements (
   created_at timestamptz not null default timezone('utc'::text, now()),
   constraint user_achievements_user_achievement_unique unique (user_id, achievement_id)
 );
-
 create index if not exists user_achievements_user_unlocked_idx
 on public.user_achievements (user_id, unlocked_at desc);
-
 create index if not exists user_achievements_achievement_id_idx
 on public.user_achievements (achievement_id);
-
 -- 2. Seed additional gameplay and progression achievement definitions
 insert into public.achievements (name, slug, description, icon, requirement, status)
 values
@@ -25,19 +22,14 @@ values
   ('Prep Cook Rank', 'prep-cook-rank', 'Reach Chef Level 2 with 100+ XP.', 'chef-hat', '{"kind":"min_level","level":2}', 'published'),
   ('Mastery Achiever', 'mastery-achiever', 'Reach 100% mastery on any recipe or learning lesson.', 'trophy', '{"kind":"mastery_score","min_score":100}', 'published')
 on conflict (slug) do nothing;
-
 -- 3. Configure Row-Level Security
 alter table public.user_achievements enable row level security;
-
 revoke all on table public.user_achievements from anon, authenticated, public;
-
 -- Grant SELECT only to authenticated users for their own unlocks
 grant select on table public.user_achievements to authenticated;
-
 create policy "Users can view their own achievements"
 on public.user_achievements for select to authenticated
 using (user_id = auth.uid());
-
 -- 4. Server-authoritative RPC for unlocking achievements
 create or replace function public.unlock_user_achievement(
   p_user_id uuid,
@@ -80,6 +72,5 @@ begin
   return v_id;
 end;
 $$;
-
 revoke all on function public.unlock_user_achievement from public, anon;
 grant execute on function public.unlock_user_achievement to authenticated;

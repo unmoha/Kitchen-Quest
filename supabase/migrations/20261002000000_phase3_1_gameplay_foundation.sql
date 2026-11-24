@@ -5,13 +5,11 @@ create type public.game_mode as enum (
   'kitchen_challenge',
   'food_detective'
 );
-
 create type public.game_session_status as enum (
   'active',
   'completed',
   'abandoned'
 );
-
 create table public.game_sessions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -24,7 +22,6 @@ create table public.game_sessions (
   updated_at timestamptz not null default now(),
   check (completed_at is null or completed_at >= started_at)
 );
-
 create table public.game_attempts (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null references public.game_sessions (id) on delete cascade,
@@ -36,7 +33,6 @@ create table public.game_attempts (
   check (question_id is not null or selected_option_id is null),
   check (response_time_ms is null or response_time_ms >= 0)
 );
-
 create table public.user_learning_progress (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -53,60 +49,45 @@ create table public.user_learning_progress (
   ),
   check (completed_at is null or completed_at >= created_at)
 );
-
 create index game_sessions_user_status_started_idx
 on public.game_sessions (user_id, status, started_at desc);
-
 create index game_attempts_session_created_at_idx
 on public.game_attempts (session_id, created_at desc);
-
 create index game_attempts_question_created_at_idx
 on public.game_attempts (question_id, created_at desc);
-
 create unique index user_learning_progress_user_module_unique_idx
 on public.user_learning_progress (user_id, learning_module_id)
 where learning_module_id is not null;
-
 create unique index user_learning_progress_user_recipe_unique_idx
 on public.user_learning_progress (user_id, recipe_id)
 where recipe_id is not null;
-
 create index user_learning_progress_user_last_attempted_idx
 on public.user_learning_progress (user_id, last_attempted_at desc);
-
 create trigger game_sessions_set_updated_at before update on public.game_sessions
 for each row execute function public.set_updated_at();
-
 create trigger user_learning_progress_set_updated_at before update on public.user_learning_progress
 for each row execute function public.set_updated_at();
-
 alter table public.game_sessions enable row level security;
 alter table public.game_attempts enable row level security;
 alter table public.user_learning_progress enable row level security;
-
 revoke all on table
   public.game_sessions,
   public.game_attempts,
   public.user_learning_progress
 from anon, authenticated;
-
 grant select, insert, update on table public.game_sessions to authenticated;
 grant select, insert on table public.game_attempts to authenticated;
 grant select, insert, update on table public.user_learning_progress to authenticated;
-
 create policy "Users can view their own sessions"
 on public.game_sessions for select to authenticated
 using (user_id = auth.uid());
-
 create policy "Users can insert their own sessions"
 on public.game_sessions for insert to authenticated
 with check (user_id = auth.uid());
-
 create policy "Users can update their own sessions"
 on public.game_sessions for update to authenticated
 using (user_id = auth.uid())
 with check (user_id = auth.uid());
-
 create policy "Users can view attempts for their own sessions"
 on public.game_attempts for select to authenticated
 using (
@@ -117,7 +98,6 @@ using (
       and gs.user_id = auth.uid()
   )
 );
-
 create policy "Users can insert attempts for their own sessions"
 on public.game_attempts for insert to authenticated
 with check (
@@ -129,15 +109,12 @@ with check (
   )
   and (question_id is not null or selected_option_id is null)
 );
-
 create policy "Users can view their own learning progress"
 on public.user_learning_progress for select to authenticated
 using (user_id = auth.uid());
-
 create policy "Users can insert their own learning progress"
 on public.user_learning_progress for insert to authenticated
 with check (user_id = auth.uid());
-
 create policy "Users can update their own learning progress"
 on public.user_learning_progress for update to authenticated
 using (user_id = auth.uid())

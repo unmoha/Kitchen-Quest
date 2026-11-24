@@ -2,7 +2,6 @@ create type public.content_status as enum ('draft', 'review', 'published', 'arch
 create type public.difficulty_level as enum ('beginner', 'intermediate', 'advanced');
 create type public.question_type as enum ('multiple_choice', 'true_false', 'ordering');
 create type public.daily_challenge_type as enum ('recipe', 'learning_module', 'ingredient', 'technique');
-
 create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   display_name text not null check (char_length(btrim(display_name)) between 1 and 40),
@@ -10,7 +9,6 @@ create table public.profiles (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-
 create table public.ingredients (
   id uuid primary key default gen_random_uuid(),
   name text not null unique check (char_length(btrim(name)) between 1 and 100),
@@ -24,7 +22,6 @@ create table public.ingredients (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-
 create table public.recipes (
   id uuid primary key default gen_random_uuid(),
   title text not null check (char_length(btrim(title)) between 1 and 160),
@@ -44,7 +41,6 @@ create table public.recipes (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-
 create table public.recipe_ingredients (
   recipe_id uuid not null references public.recipes (id) on delete cascade,
   ingredient_id uuid not null references public.ingredients (id) on delete restrict,
@@ -54,7 +50,6 @@ create table public.recipe_ingredients (
   preparation_note text,
   primary key (recipe_id, ingredient_id)
 );
-
 create table public.recipe_steps (
   id uuid primary key default gen_random_uuid(),
   recipe_id uuid not null references public.recipes (id) on delete cascade,
@@ -64,7 +59,6 @@ create table public.recipe_steps (
   educational_note text,
   unique (recipe_id, step_number)
 );
-
 create table public.learning_modules (
   id uuid primary key default gen_random_uuid(),
   title text not null check (char_length(btrim(title)) between 1 and 160),
@@ -77,7 +71,6 @@ create table public.learning_modules (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-
 create table public.questions (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
@@ -90,7 +83,6 @@ create table public.questions (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-
 create table public.question_options (
   id uuid primary key default gen_random_uuid(),
   question_id uuid not null references public.questions (id) on delete cascade,
@@ -99,7 +91,6 @@ create table public.question_options (
   is_correct boolean not null default false,
   unique (question_id, option_order)
 );
-
 create table public.achievements (
   id uuid primary key default gen_random_uuid(),
   name text not null check (char_length(btrim(name)) between 1 and 100),
@@ -110,7 +101,6 @@ create table public.achievements (
   status public.content_status not null default 'draft',
   created_at timestamptz not null default now()
 );
-
 create table public.daily_challenges (
   id uuid primary key default gen_random_uuid(),
   challenge_date date not null,
@@ -131,7 +121,6 @@ create table public.daily_challenges (
     or (challenge_type = 'technique' and recipe_id is null and learning_module_id is null and ingredient_id is null)
   )
 );
-
 create index ingredients_status_name_idx on public.ingredients (status, name);
 create index recipes_status_title_idx on public.recipes (status, title);
 create index recipe_ingredients_ingredient_id_idx on public.recipe_ingredients (ingredient_id);
@@ -140,7 +129,6 @@ create index questions_module_status_idx on public.questions (learning_module_id
 create unique index question_options_one_correct_idx on public.question_options (question_id) where is_correct;
 create index achievements_status_name_idx on public.achievements (status, name);
 create index daily_challenges_status_date_idx on public.daily_challenges (status, challenge_date);
-
 create function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -151,9 +139,7 @@ begin
   return new;
 end;
 $$;
-
 revoke all on function public.set_updated_at() from public, anon, authenticated;
-
 create trigger profiles_set_updated_at before update on public.profiles
 for each row execute function public.set_updated_at();
 create trigger ingredients_set_updated_at before update on public.ingredients
@@ -164,7 +150,6 @@ create trigger learning_modules_set_updated_at before update on public.learning_
 for each row execute function public.set_updated_at();
 create trigger questions_set_updated_at before update on public.questions
 for each row execute function public.set_updated_at();
-
 create function public.handle_new_auth_user()
 returns trigger
 language plpgsql
@@ -186,18 +171,15 @@ begin
   return new;
 end;
 $$;
-
 revoke all on function public.handle_new_auth_user() from public, anon, authenticated;
 create trigger on_auth_user_created after insert on auth.users
 for each row execute function public.handle_new_auth_user();
-
 insert into public.profiles (id, display_name)
 select
   u.id,
   left(coalesce(nullif(btrim(u.raw_user_meta_data ->> 'display_name'), ''), 'Home cook'), 40)
 from auth.users u
 on conflict (id) do nothing;
-
 alter table public.profiles enable row level security;
 alter table public.ingredients enable row level security;
 alter table public.recipes enable row level security;
@@ -208,7 +190,6 @@ alter table public.questions enable row level security;
 alter table public.question_options enable row level security;
 alter table public.achievements enable row level security;
 alter table public.daily_challenges enable row level security;
-
 revoke all on table
   public.profiles,
   public.ingredients,
@@ -221,9 +202,7 @@ revoke all on table
   public.achievements,
   public.daily_challenges
 from anon, authenticated;
-
 grant usage on schema public to anon, authenticated;
-
 -- Profiles are private. The owning user can read their row and update only editable columns.
 grant select on table public.profiles to authenticated;
 grant update (display_name, avatar_url) on table public.profiles to authenticated;
@@ -234,7 +213,6 @@ create policy "Users can update their own profile"
 on public.profiles for update to authenticated
 using ((select auth.uid()) = id)
 with check ((select auth.uid()) = id);
-
 -- Public roles receive read-only grants; these policies expose published content only.
 grant select on table
   public.ingredients,
@@ -245,7 +223,6 @@ grant select on table
   public.achievements,
   public.daily_challenges
 to anon, authenticated;
-
 create policy "Published ingredients are readable"
 on public.ingredients for select to anon, authenticated
 using (status = 'published');
@@ -278,6 +255,5 @@ using (
     or challenge_type = 'technique'
   )
 );
-
 -- Question rows and answer options intentionally have no client grants or read policies.
--- Future game validation must use a trusted server operation and must not return is_correct.
+-- Future game validation must use a trusted server operation and must not return is_correct.;

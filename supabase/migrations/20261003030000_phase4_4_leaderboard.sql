@@ -5,7 +5,6 @@
 -- 1. Index for efficient XP aggregation
 create index if not exists user_xp_transactions_user_amount_idx
 on public.user_xp_transactions (user_id, amount);
-
 -- 2. Function: get_leaderboard
 create or replace function public.get_leaderboard(
   p_page integer default 1,
@@ -66,10 +65,8 @@ begin
   limit v_page_size offset v_offset;
 end;
 $$;
-
 revoke all on function public.get_leaderboard from public;
 grant execute on function public.get_leaderboard to authenticated, anon;
-
 -- 3. Function: get_user_leaderboard_rank
 create or replace function public.get_user_leaderboard_rank(
   p_user_id uuid
@@ -114,6 +111,5 @@ begin
   where ru.user_id = p_user_id;
 end;
 $$;
-
 revoke all on function public.get_user_leaderboard_rank from public, anon;
 grant execute on function public.get_user_leaderboard_rank to authenticated;
