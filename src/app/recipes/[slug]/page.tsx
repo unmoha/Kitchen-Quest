@@ -64,6 +64,12 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
                         ) : null}
                     </div>
                     <p className="mt-5 text-sm leading-6 text-[#59675c]">{educationalInfo}</p>
+                    <div className="mt-6">
+                        <ButtonLink href={`/recipes/${slug}/cook`} variant="primary">
+                            <PlayCircle aria-hidden="true" size={18} />
+                            Start cooking
+                        </ButtonLink>
+                    </div>
                 </div>
             </div>
 
