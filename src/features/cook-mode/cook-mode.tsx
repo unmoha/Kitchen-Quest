@@ -68,9 +68,6 @@ export function CookMode({ slug, recipeName, servings, safetyNotes, ingredients,
     const ingredientsOpenRef = useRef(false);
     const restartDelayRef = useRef(300);
     const startedAtRef = useRef(0);
-    const ingredientsOpenRef = useRef(false);
-    const restartDelayRef = useRef(300);
-    const startedAtRef = useRef(0);
 
     const step = steps[index];
     const ringing = timer?.ringing ?? false;
@@ -134,7 +131,6 @@ export function CookMode({ slug, recipeName, servings, safetyNotes, ingredients,
 
     function beginCooking() {
         ensureAudio();
-        ensureAudio();
         setPhase("cook");
         setIndex(0);
         setShowWhy(false);
@@ -193,11 +189,9 @@ export function CookMode({ slug, recipeName, servings, safetyNotes, ingredients,
     useEffect(() => {
         commandRef.current = runCommand;
         ingredientsOpenRef.current = showIngredients;
-        ingredientsOpenRef.current = showIngredients;
     });
 
     function startVoice() {
-        ensureAudio();
         ensureAudio();
         const Recognition = getRecognitionConstructor();
         if (!Recognition) return;
@@ -243,12 +237,6 @@ export function CookMode({ slug, recipeName, servings, safetyNotes, ingredients,
                 setVoiceError("No microphone was found on this device.");
                 return;
             }
-            if (event.error === "audio-capture") {
-                wantVoiceRef.current = false;
-                setListening(false);
-                setVoiceError("No microphone was found on this device.");
-                return;
-            }
             if (event.error === "not-allowed" || event.error === "service-not-allowed") {
                 wantVoiceRef.current = false;
                 setListening(false);
@@ -258,7 +246,6 @@ export function CookMode({ slug, recipeName, servings, safetyNotes, ingredients,
         wantVoiceRef.current = true;
         recognitionRef.current = recognition;
         try {
-            startedAtRef.current = Date.now();
             startedAtRef.current = Date.now();
             recognition.start();
             setListening(true);
@@ -330,7 +317,6 @@ export function CookMode({ slug, recipeName, servings, safetyNotes, ingredients,
                 }
                 lock = sentinel;
                 sentinel.addEventListener("release", () => setAwake(false));
-                sentinel.addEventListener("release", () => setAwake(false));
                 setAwake(true);
             } catch {
                 setAwake(false);
@@ -352,10 +338,6 @@ export function CookMode({ slug, recipeName, servings, safetyNotes, ingredients,
     useEffect(() => {
         const onKey = (event: KeyboardEvent) => {
             if (event.metaKey || event.ctrlKey || event.altKey) return;
-            if (ingredientsOpenRef.current) {
-                if (event.key === "Escape") commandRef.current({ type: "ingredients" });
-                return; // don't change steps behind the ingredients sheet
-            }
             if (ingredientsOpenRef.current) {
                 if (event.key === "Escape") commandRef.current({ type: "ingredients" });
                 return; // don't change steps behind the ingredients sheet
@@ -592,7 +574,6 @@ export function CookMode({ slug, recipeName, servings, safetyNotes, ingredients,
                         aria-label="Ingredients"
                         className="max-h-[80vh] w-full overflow-y-auto rounded-t-3xl bg-[#f8f6f0] p-6 text-[#254235] sm:max-w-lg sm:rounded-3xl"
                         onClick={(event) => event.stopPropagation()}
-                        aria-modal="true"
                         aria-modal="true"
                         role="dialog"
                     >
