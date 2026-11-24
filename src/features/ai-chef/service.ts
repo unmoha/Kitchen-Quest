@@ -65,7 +65,8 @@ export class DefaultAiChefProvider implements AiChefProvider {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+                const geminiModel = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`;
                 
                 // Map validated history to Gemini parts format (role: "user" | "model")
                 const historyContents = (params.history || []).map((m) => ({
@@ -84,7 +85,7 @@ export class DefaultAiChefProvider implements AiChefProvider {
 
                 const res = await fetch(endpoint, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "application/json", "x-goog-api-key": geminiApiKey },
                     body: JSON.stringify({
                         system_instruction: {
                             parts: [{ text: params.systemPrompt }],
@@ -100,6 +101,9 @@ export class DefaultAiChefProvider implements AiChefProvider {
 
                 clearTimeout(timeoutId);
 
+                if (!res.ok) {
+                    console.error(`[ai-chef] ${providerName} returned HTTP ${res.status}; using fallback answer`);
+                }
                 if (res.ok) {
                     const json = await res.json();
                     const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -147,6 +151,9 @@ export class DefaultAiChefProvider implements AiChefProvider {
 
                 clearTimeout(timeoutId);
 
+                if (!res.ok) {
+                    console.error(`[ai-chef] ${providerName} returned HTTP ${res.status}; using fallback answer`);
+                }
                 if (res.ok) {
                     const json = await res.json();
                     const text = json?.choices?.[0]?.message?.content;
