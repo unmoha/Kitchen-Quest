@@ -1,5 +1,6 @@
 alter table public.game_sessions
  drop constraint game_sessions_recipe_builder_challenges_check;
+
 alter table public.game_sessions
  add constraint game_sessions_recipe_challenges_check
  check (
@@ -9,10 +10,13 @@ alter table public.game_sessions
      or game_mode in ('recipe_builder', 'cooking_order')
    )
  );
+
 alter table public.game_attempts
  add column selected_recipe_step_ids uuid[];
+
 alter table public.game_attempts
  drop constraint game_attempts_recipe_builder_payload_check;
+
 alter table public.game_attempts
  add constraint game_attempts_recipe_game_payload_check
  check (

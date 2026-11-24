@@ -3,15 +3,19 @@
 
 -- 1. Revoke INSERT, UPDATE, DELETE permissions from anon, authenticated, and public
 revoke insert, update, delete on table public.user_xp_transactions from anon, authenticated, public;
+
 -- 2. Explicitly grant SELECT only to authenticated users
 grant select on table public.user_xp_transactions to authenticated;
+
 -- 3. Drop the client insert policy
 drop policy if exists "Users can insert their own xp transactions" on public.user_xp_transactions;
+
 -- 4. Ensure SELECT policy strictly restricts viewing to user's own transactions
 drop policy if exists "Users can view their own xp transactions" on public.user_xp_transactions;
 create policy "Users can view their own xp transactions"
 on public.user_xp_transactions for select to authenticated
 using (user_id = auth.uid());
+
 -- 5. Create secure server-authoritative RPC function for legitimate XP awarding
 create or replace function public.award_user_xp(
   p_user_id uuid,
@@ -91,5 +95,6 @@ begin
   return v_id;
 end;
 $$;
+
 revoke all on function public.award_user_xp from public, anon;
 grant execute on function public.award_user_xp to authenticated;

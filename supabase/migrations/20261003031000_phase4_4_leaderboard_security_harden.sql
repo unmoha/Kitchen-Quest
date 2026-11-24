@@ -42,5 +42,6 @@ begin
   where ru.user_id = p_user_id;
 end;
 $$;
+
 revoke all on function public.get_user_leaderboard_rank from public, anon;
 grant execute on function public.get_user_leaderboard_rank to authenticated;

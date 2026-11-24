@@ -10,6 +10,7 @@ create table if not exists public.user_streaks (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
 -- 2. Create user_daily_challenges table
 create table if not exists public.user_daily_challenges (
   id uuid primary key default gen_random_uuid(),
@@ -19,26 +20,33 @@ create table if not exists public.user_daily_challenges (
   created_at timestamptz not null default now(),
   constraint user_daily_challenges_user_challenge_unique unique (user_id, daily_challenge_id)
 );
+
 create index if not exists user_daily_challenges_user_idx on public.user_daily_challenges (user_id);
 create index if not exists user_streaks_user_idx on public.user_streaks (user_id);
+
 -- 3. Enable RLS
 alter table public.user_streaks enable row level security;
 alter table public.user_daily_challenges enable row level security;
+
 -- 4. Revoke direct mutations from anon, authenticated, public
 revoke all on table public.user_streaks from anon, authenticated, public;
 revoke all on table public.user_daily_challenges from anon, authenticated, public;
+
 -- 5. Grant SELECT only to authenticated users
 grant select on table public.user_streaks to authenticated;
 grant select on table public.user_daily_challenges to authenticated;
+
 -- 6. Define SELECT RLS policies
 drop policy if exists "Users can view their own streak" on public.user_streaks;
 create policy "Users can view their own streak"
 on public.user_streaks for select to authenticated
 using (user_id = (select auth.uid()));
+
 drop policy if exists "Users can view their own daily challenges" on public.user_daily_challenges;
 create policy "Users can view their own daily challenges"
 on public.user_daily_challenges for select to authenticated
 using (user_id = (select auth.uid()));
+
 -- 7. Server-Authoritative RPC: record_user_streak
 create or replace function public.record_user_streak(
   p_user_id uuid,
@@ -139,8 +147,10 @@ begin
   );
 end;
 $$;
+
 revoke all on function public.record_user_streak from public, anon;
 grant execute on function public.record_user_streak to authenticated;
+
 -- 8. Server-Authoritative RPC: complete_user_daily_challenge
 create or replace function public.complete_user_daily_challenge(
   p_user_id uuid,
@@ -197,5 +207,6 @@ begin
   return v_inserted_id is not null;
 end;
 $$;
+
 revoke all on function public.complete_user_daily_challenge from public, anon;
 grant execute on function public.complete_user_daily_challenge to authenticated;
